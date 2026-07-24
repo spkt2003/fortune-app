@@ -8,9 +8,7 @@ export default function ConfirmedPreview({ imageSrc, onRetake }: ConfirmedPrevie
     <div className="flex flex-col items-center gap-4">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={imageSrc} alt="ภาพที่ยืนยันแล้ว" className="w-full max-w-md rounded-lg" />
-      <p className="text-center text-sm text-zinc-500">
-        กำลังเตรียมส่งต่อ Ticket 2 (MediaPipe) — ยังไม่มีในเวอร์ชันนี้
-      </p>
+      <p className="text-center text-sm text-zinc-500">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
       <button
         type="button"
         onClick={onRetake}
