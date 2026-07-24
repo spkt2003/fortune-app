@@ -3,10 +3,13 @@
 import { useState } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFaceLandmarks } from "@/hooks/useFaceLandmarks";
+import { computeFaceFeatures, type FaceFeatures } from "@/lib/mediapipe/computeFaceFeatures";
+import type { FortunePayload, Gender } from "@/lib/fortune/payload";
 import CameraView from "./CameraView";
 import CaptureControls from "./CaptureControls";
 import CameraError from "./CameraError";
 import ConfirmedPreview from "./ConfirmedPreview";
+import GenderAgeForm from "@/components/demographics/GenderAgeForm";
 
 type ConfirmIssue = "no-face" | "detection-error" | null;
 
@@ -14,6 +17,8 @@ export default function CameraCapture() {
   const camera = useCamera();
   const faceLandmarks = useFaceLandmarks();
   const [confirmIssue, setConfirmIssue] = useState<ConfirmIssue>(null);
+  const [faceFeatures, setFaceFeatures] = useState<FaceFeatures | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleConfirm = async () => {
     if (!camera.capturedImage) return;
@@ -21,6 +26,7 @@ export default function CameraCapture() {
       const landmarks = await faceLandmarks.detect(camera.capturedImage);
       if (landmarks) {
         setConfirmIssue(null);
+        setFaceFeatures(computeFaceFeatures(landmarks));
         camera.confirm();
       } else {
         setConfirmIssue("no-face");
@@ -32,11 +38,28 @@ export default function CameraCapture() {
 
   const handleRetake = () => {
     setConfirmIssue(null);
+    setFaceFeatures(null);
+    setSubmitted(false);
     camera.retake();
   };
 
+  const handleSubmit = (demographics: { gender: Gender; age: number }) => {
+    if (!faceFeatures) return;
+    const payload: FortunePayload = { faceFeatures, ...demographics };
+    console.log(payload);
+    setSubmitted(true);
+  };
+
   if (camera.status === "confirmed" && camera.capturedImage) {
-    return <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={camera.retake} />;
+    return (
+      <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
+        {submitted ? (
+          <p className="text-center text-sm text-zinc-500">ส่งข้อมูลเรียบร้อยแล้ว</p>
+        ) : (
+          <GenderAgeForm onSubmit={handleSubmit} />
+        )}
+      </ConfirmedPreview>
+    );
   }
 
   if (camera.status === "error" && camera.error) {
