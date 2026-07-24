@@ -134,4 +134,34 @@ describe("computeFaceFeatures", () => {
     expect(result.leftFaceHalfWidthRatio + result.rightFaceHalfWidthRatio).toBeCloseTo(1, 5);
     expect(result.leftFaceHalfWidthRatio).toBeCloseTo(0.5, 1);
   });
+
+  it("assigns a larger left eye (image-right side) to leftEyeWidthToFaceWidthRatio", () => {
+    const result = computeFaceFeatures(
+      buildFaceLandmarks({ leftEyeRadius: { x: 0.08, y: 0.03 } }),
+    );
+    expect(result.leftEyeWidthToFaceWidthRatio).toBeGreaterThan(result.rightEyeWidthToFaceWidthRatio);
+  });
+
+  it("assigns a larger right eye (image-left side) to rightEyeWidthToFaceWidthRatio", () => {
+    const result = computeFaceFeatures(
+      buildFaceLandmarks({ rightEyeRadius: { x: 0.08, y: 0.03 } }),
+    );
+    expect(result.rightEyeWidthToFaceWidthRatio).toBeGreaterThan(result.leftEyeWidthToFaceWidthRatio);
+  });
+
+  it("gives a positive leftEyeSlantRatio when the left eye's outer corner is raised", () => {
+    // Override two of the left eye cluster's own points directly, pushed past the
+    // ellipse's natural x-range so they become the new width/slant extremes:
+    // one far from the midline with a raised (smaller) y ("outer corner, upturned"),
+    // one close to the midline at the unchanged center y ("inner corner").
+    const landmarks = buildFaceLandmarks();
+    const outerIdx = EYE_CLUSTER_A_IDX[0];
+    const innerIdx = EYE_CLUSTER_A_IDX[1];
+    landmarks[outerIdx] = point(0.695, 0.4); // outer corner, raised (y < center.y of 0.45)
+    landmarks[innerIdx] = point(0.545, 0.45); // inner corner, unchanged y
+
+    const result = computeFaceFeatures(landmarks);
+    expect(result.leftEyeSlantRatio).toBeGreaterThan(0);
+    expect(result.rightEyeSlantRatio).toBeCloseTo(0, 5);
+  });
 });
