@@ -164,4 +164,27 @@ describe("computeFaceFeatures", () => {
     expect(result.leftEyeSlantRatio).toBeGreaterThan(0);
     expect(result.rightEyeSlantRatio).toBeCloseTo(0, 5);
   });
+
+  it("tracks geometric x-position, not which MediaPipe LEFT_EYE/RIGHT_EYE constant fed the cluster", () => {
+    // buildFaceLandmarks's "leftEyeCenter"/"rightEyeCenter" options control where
+    // MediaPipe's own FACE_LANDMARKS_LEFT_EYE / FACE_LANDMARKS_RIGHT_EYE clusters get
+    // placed (EYE_CLUSTER_A_IDX / EYE_CLUSTER_B_IDX respectively) — they don't assert
+    // anatomical sidedness themselves. Here we deliberately invert the usual convention:
+    // MediaPipe's own "LEFT_EYE" cluster is placed on the image's SMALLER-x (anatomical
+    // right) side and enlarged, while "RIGHT_EYE" sits on the LARGER-x (anatomical left)
+    // side at default size. If computeFaceFeatures ever regressed to trusting MediaPipe's
+    // LEFT_/RIGHT_ naming directly (bypassing splitByAnatomicalSide's x-position check),
+    // it would wrongly report the "LEFT_EYE"-named cluster as leftEyeWidthToFaceWidthRatio
+    // even though it sits on the anatomical right — this test would then fail.
+    const landmarks = buildFaceLandmarks({
+      leftEyeCenter: { x: 0.38, y: 0.45 },
+      leftEyeRadius: { x: 0.08, y: 0.03 },
+      rightEyeCenter: { x: 0.62, y: 0.45 },
+      rightEyeRadius: { x: 0.05, y: 0.02 },
+    });
+    const result = computeFaceFeatures(landmarks);
+    // Geometric left (larger x, 0.62) is the smaller/default-radius cluster here, so
+    // leftEyeWidthToFaceWidthRatio must be the SMALLER value.
+    expect(result.rightEyeWidthToFaceWidthRatio).toBeGreaterThan(result.leftEyeWidthToFaceWidthRatio);
+  });
 });
