@@ -42,3 +42,6 @@ next-env.d.ts
 
 .claude
 CLAUDE.md
+
+# agent working docs (specs/plans) — not needed for the app to run, kept local only
+/docs/superpowers/
