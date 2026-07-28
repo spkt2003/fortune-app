@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Taviraj, Sarabun } from "next/font/google";
+import { Pridi, Prompt } from "next/font/google";
 import "./globals.css";
 
-const taviraj = Taviraj({
-  variable: "--font-taviraj",
+const pridi = Pridi({
+  variable: "--font-pridi",
   subsets: ["thai", "latin"],
-  weight: ["600", "700"],
+  weight: ["500", "600", "700"],
 });
 
-const sarabun = Sarabun({
-  variable: "--font-sarabun",
+const prompt = Prompt({
+  variable: "--font-prompt",
   subsets: ["thai", "latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={`${taviraj.variable} ${sarabun.variable} h-full antialiased`}
+      className={`${pridi.variable} ${prompt.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-ink font-sans text-parchment print:bg-white print:text-black">
         {children}

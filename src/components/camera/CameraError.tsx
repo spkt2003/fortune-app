@@ -16,7 +16,7 @@ export default function CameraError({ message, action, onRetry, onClose }: Camer
         <button
           type="button"
           onClick={onRetry}
-          className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90"
+          className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110"
         >
           ลองใหม่
         </button>

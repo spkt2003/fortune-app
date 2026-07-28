@@ -49,7 +49,7 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
       <button
         type="button"
         onClick={onAccept}
-        className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90"
+        className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110"
       >
         เข้าใจแล้ว และยินยอมเริ่มใช้งาน
       </button>

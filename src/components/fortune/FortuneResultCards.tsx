@@ -23,20 +23,20 @@ export default function FortuneResultCards({ result }: FortuneResultCardsProps) 
         {CARDS.map((card) => (
           <div
             key={card.key}
-            className="flex flex-col gap-2 rounded-2xl border border-gold/30 bg-panel p-5 print:border print:border-zinc-300 print:bg-white print:shadow-none"
+            className="flex flex-col gap-2 rounded-2xl border border-gold/30 bg-panel p-5 shadow-[0_0_20px_-6px_rgba(217,119,87,0.3)] print:border print:border-zinc-300 print:bg-white print:shadow-none"
           >
             <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-gold/80 print:text-black">
               <span aria-hidden>{card.emoji}</span>
               {card.label}
             </h3>
-            <p className="text-sm text-parchment print:text-black">{result[card.key]}</p>
+            <p className="text-sm leading-relaxed text-parchment print:text-black">{result[card.key]}</p>
           </div>
         ))}
       </div>
       <button
         type="button"
         onClick={() => window.print()}
-        className="print:hidden rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90"
+        className="print:hidden rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110"
       >
         พิมพ์ผลลัพธ์
       </button>

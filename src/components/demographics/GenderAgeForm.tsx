@@ -15,7 +15,7 @@ const GENDER_OPTIONS: { value: Gender; label: string }[] = [
 ];
 
 const primaryButtonClass =
-  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90 disabled:opacity-40 disabled:hover:bg-lacquer";
+  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100";
 
 export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
   const [gender, setGender] = useState<Gender | null>(null);

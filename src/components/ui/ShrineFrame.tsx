@@ -15,7 +15,7 @@ interface ShrineFrameProps {
 export default function ShrineFrame({ children, className = "" }: ShrineFrameProps) {
   return (
     <div
-      className={`rounded-lg border border-gold/40 bg-panel p-6 text-parchment print:border-none print:bg-white print:p-0 print:text-black ${className}`}
+      className={`rounded-xl border border-gold/30 bg-panel p-6 text-parchment shadow-[0_0_24px_-8px_rgba(217,119,87,0.35)] print:border-none print:bg-white print:p-0 print:text-black print:shadow-none ${className}`}
     >
       {children}
     </div>

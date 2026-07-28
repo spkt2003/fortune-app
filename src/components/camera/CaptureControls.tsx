@@ -5,7 +5,7 @@ type CaptureControlsProps =
   | { status: "captured"; onConfirm: () => void; onRetake: () => void; retakeDisabled: boolean };
 
 const primaryButtonClass =
-  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90 disabled:opacity-40 disabled:hover:bg-lacquer";
+  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100";
 const secondaryButtonClass =
   "rounded-full border border-gold/60 px-6 py-3 text-gold transition hover:bg-gold/10";
 

@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1a0f0d;
-  --panel: #241512;
-  --lacquer: #8c1f1f;
-  --gold: #c9a227;
-  --parchment: #ede3d0;
+  --ink: #18181b;
+  --panel: #27272a;
+  --lacquer: #d97757;
+  --gold: #d97757;
+  --parchment: #fafaf9;
   --jade: #3f6c51;
 }
 
@@ -16,6 +16,6 @@
   --color-gold: var(--gold);
   --color-parchment: var(--parchment);
   --color-jade: var(--jade);
-  --font-display: var(--font-taviraj);
-  --font-sans: var(--font-sarabun);
+  --font-display: var(--font-pridi);
+  --font-sans: var(--font-prompt);
 }
