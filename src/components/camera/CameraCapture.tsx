@@ -83,11 +83,11 @@ export default function CameraCapture() {
       <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
         {fortuneState.status === "idle" && <GenderAgeForm onSubmit={handleSubmit} />}
         {fortuneState.status === "loading" && (
-          <p className="text-center text-sm text-zinc-500">กำลังทำนายผล...</p>
+          <p className="text-center text-sm text-gold/80">กำลังทำนายผล...</p>
         )}
         {fortuneState.status === "error" && (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{fortuneState.message}</p>
+            <p className="text-sm text-amber-400">{fortuneState.message}</p>
             <button
               type="button"
               onClick={handleRetry}

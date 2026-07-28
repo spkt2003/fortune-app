@@ -15,7 +15,7 @@ const GENDER_OPTIONS: { value: Gender; label: string }[] = [
 ];
 
 const primaryButtonClass =
-  "rounded-full bg-black px-6 py-3 text-white disabled:opacity-40 dark:bg-white dark:text-black";
+  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90 disabled:opacity-40 disabled:hover:bg-lacquer";
 
 export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
   const [gender, setGender] = useState<Gender | null>(null);
@@ -33,17 +33,15 @@ export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full max-w-md flex-col gap-4 rounded-lg border border-gold/40 bg-panel p-6 text-parchment"
+    >
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400">
-          เพศ
-        </legend>
+        <legend className="text-sm font-semibold tracking-wide text-gold/80">เพศ</legend>
         <div className="flex gap-4">
           {GENDER_OPTIONS.map((option) => (
-            <label
-              key={option.value}
-              className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300"
-            >
+            <label key={option.value} className="flex items-center gap-2 text-parchment">
               <input
                 type="radio"
                 name="gender"
@@ -58,20 +56,16 @@ export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
       </fieldset>
 
       <label className="flex flex-col gap-2">
-        <span className="text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400">
-          อายุ
-        </span>
+        <span className="text-sm font-semibold tracking-wide text-gold/80">อายุ</span>
         <input
           type="number"
           value={ageInput}
           onChange={(event) => setAgeInput(event.target.value)}
           onBlur={() => setAgeTouched(true)}
-          className="rounded-lg border border-zinc-300 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded-lg border border-gold/30 bg-ink/40 px-4 py-2 text-parchment"
         />
         {ageTouched && !ageValid && (
-          <span className="text-sm text-red-600 dark:text-red-400">
-            กรุณากรอกอายุระหว่าง 1-120 ปี
-          </span>
+          <span className="text-sm text-amber-400">กรุณากรอกอายุระหว่าง 1-120 ปี</span>
         )}
       </label>
 

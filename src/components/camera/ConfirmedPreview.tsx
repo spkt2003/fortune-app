@@ -15,12 +15,12 @@ export default function ConfirmedPreview({ imageSrc, onRetake, children }: Confi
         alt="ภาพที่ยืนยันแล้ว"
         className="w-full max-w-md rounded-lg print:hidden"
       />
-      <p className="text-center text-sm text-zinc-500 print:hidden">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
+      <p className="text-center text-sm text-gold/80 print:hidden">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
       {children}
       <button
         type="button"
         onClick={onRetake}
-        className="rounded-full border border-black px-6 py-3 dark:border-white dark:text-white print:hidden"
+        className="rounded-full border border-gold/60 px-6 py-3 text-gold print:hidden"
       >
         ถ่ายใหม่
       </button>
