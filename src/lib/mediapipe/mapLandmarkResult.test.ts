@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { mapLandmarkResult } from "./mapLandmarkResult";
-import type { FaceLandmarkerResult, NormalizedLandmark } from "@mediapipe/tasks-vision";
+import { mapLandmarkResult, mapTransformMatrix } from "./mapLandmarkResult";
+import type { FaceLandmarkerResult, Matrix, NormalizedLandmark } from "@mediapipe/tasks-vision";
 
 function fakeLandmarks(count: number): NormalizedLandmark[] {
   return Array.from({ length: count }, (_, i) => ({ x: i, y: i, z: i, visibility: 1 }));
@@ -29,5 +29,26 @@ describe("mapLandmarkResult", () => {
   it("returns null when the first face has no landmark points", () => {
     const result = mapLandmarkResult(fakeResult([[]]));
     expect(result).toBeNull();
+  });
+});
+
+function fakeMatrix(): Matrix {
+  return { rows: 4, columns: 4, data: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] };
+}
+
+function mapLandmarkResultFixture(facialTransformationMatrixes: Matrix[]): FaceLandmarkerResult {
+  return { faceLandmarks: [], faceBlendshapes: [], facialTransformationMatrixes };
+}
+
+describe("mapTransformMatrix", () => {
+  it("returns the first face's transformation matrix", () => {
+    const matrix = fakeMatrix();
+    const result = mapLandmarkResultFixture([matrix]);
+    expect(mapTransformMatrix(result)).toBe(matrix);
+  });
+
+  it("returns null when no transformation matrix is present", () => {
+    const result = mapLandmarkResultFixture([]);
+    expect(mapTransformMatrix(result)).toBeNull();
   });
 });
