@@ -18,7 +18,7 @@ export default function FortuneResultCards({ result }: FortuneResultCardsProps) 
         {CARDS.map((card) => (
           <div
             key={card.key}
-            className="flex flex-col gap-2 rounded-2xl bg-white p-5 shadow-sm dark:bg-zinc-900 print:border print:border-zinc-300 print:shadow-none"
+            className="flex flex-col gap-2 rounded-2xl bg-white p-5 shadow-sm dark:bg-zinc-900 print:border print:border-zinc-300 print:bg-white print:shadow-none"
           >
             <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-zinc-500 dark:text-zinc-400 print:text-black">
               <span aria-hidden>{card.emoji}</span>
