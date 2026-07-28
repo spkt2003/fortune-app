@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFaceLandmarks } from "@/hooks/useFaceLandmarks";
 import { computeFaceFeatures, type FaceFeatures } from "@/lib/mediapipe/computeFaceFeatures";
@@ -28,6 +28,7 @@ export default function CameraCapture() {
   const [faceFeatures, setFaceFeatures] = useState<FaceFeatures | null>(null);
   const [fortuneState, setFortuneState] = useState<FortuneState>({ status: "idle" });
   const [lastPayload, setLastPayload] = useState<FortunePayload | null>(null);
+  const requestIdRef = useRef(0);
 
   const handleConfirm = async () => {
     if (!camera.capturedImage) return;
@@ -46,6 +47,7 @@ export default function CameraCapture() {
   };
 
   const handleRetake = () => {
+    requestIdRef.current++;
     setConfirmIssue(null);
     setFaceFeatures(null);
     setFortuneState({ status: "idle" });
@@ -54,9 +56,11 @@ export default function CameraCapture() {
   };
 
   const submitPayload = async (payload: FortunePayload) => {
+    const requestId = ++requestIdRef.current;
     setLastPayload(payload);
     setFortuneState({ status: "loading" });
     const result = await requestFortune(payload);
+    if (requestIdRef.current !== requestId) return;
     setFortuneState(
       result.ok ? { status: "success", result: result.result } : { status: "error", message: result.message },
     );
