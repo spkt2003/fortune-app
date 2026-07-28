@@ -1,4 +1,4 @@
-import { isValidAge } from "../demographics/validateAge";
+import { isValidAge } from "@/lib/demographics/validateAge";
 import type { FortunePayload, Gender } from "./payload";
 
 const GENDERS: Gender[] = ["male", "female", "unspecified"];

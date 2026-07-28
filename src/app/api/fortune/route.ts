@@ -62,8 +62,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const geminiData = await geminiResponse.json();
-  const rawText: unknown = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let geminiData: unknown;
+  try {
+    geminiData = await geminiResponse.json();
+  } catch {
+    return NextResponse.json(FALLBACK_FORTUNE, { status: 200 });
+  }
+
+  const rawText: unknown = (geminiData as any)?.candidates?.[0]?.content?.parts?.[0]?.text;
 
   if (typeof rawText !== "string") {
     return NextResponse.json(FALLBACK_FORTUNE, { status: 200 });
