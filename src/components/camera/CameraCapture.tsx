@@ -1,24 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFaceLandmarks } from "@/hooks/useFaceLandmarks";
 import { computeFaceFeatures, type FaceFeatures } from "@/lib/mediapipe/computeFaceFeatures";
-import type { FortunePayload, Gender } from "@/lib/fortune/payload";
+import type { FortunePayload, FortuneResult, Gender } from "@/lib/fortune/payload";
+import { requestFortune } from "@/lib/fortune/requestFortune";
 import CameraView from "./CameraView";
 import CaptureControls from "./CaptureControls";
 import CameraError from "./CameraError";
 import ConfirmedPreview from "./ConfirmedPreview";
 import GenderAgeForm from "@/components/demographics/GenderAgeForm";
+import FortuneResultCards from "@/components/fortune/FortuneResultCards";
 
 type ConfirmIssue = "no-face" | "detection-error" | null;
+
+type FortuneState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "success"; result: FortuneResult }
+  | { status: "error"; message: string };
 
 export default function CameraCapture() {
   const camera = useCamera();
   const faceLandmarks = useFaceLandmarks();
   const [confirmIssue, setConfirmIssue] = useState<ConfirmIssue>(null);
   const [faceFeatures, setFaceFeatures] = useState<FaceFeatures | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [fortuneState, setFortuneState] = useState<FortuneState>({ status: "idle" });
+  const [lastPayload, setLastPayload] = useState<FortunePayload | null>(null);
+  const requestIdRef = useRef(0);
 
   const handleConfirm = async () => {
     if (!camera.capturedImage) return;
@@ -37,27 +47,54 @@ export default function CameraCapture() {
   };
 
   const handleRetake = () => {
+    requestIdRef.current++;
     setConfirmIssue(null);
     setFaceFeatures(null);
-    setSubmitted(false);
+    setFortuneState({ status: "idle" });
+    setLastPayload(null);
     camera.retake();
+  };
+
+  const submitPayload = async (payload: FortunePayload) => {
+    const requestId = ++requestIdRef.current;
+    setLastPayload(payload);
+    setFortuneState({ status: "loading" });
+    const result = await requestFortune(payload);
+    if (requestIdRef.current !== requestId) return;
+    setFortuneState(
+      result.ok ? { status: "success", result: result.result } : { status: "error", message: result.message },
+    );
   };
 
   const handleSubmit = (demographics: { gender: Gender; age: number }) => {
     if (!faceFeatures) return;
-    const payload: FortunePayload = { faceFeatures, ...demographics };
-    console.log(payload);
-    setSubmitted(true);
+    submitPayload({ faceFeatures, ...demographics });
+  };
+
+  const handleRetry = () => {
+    if (lastPayload) submitPayload(lastPayload);
   };
 
   if (camera.status === "confirmed" && camera.capturedImage) {
     return (
       <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
-        {submitted ? (
-          <p className="text-center text-sm text-zinc-500">ส่งข้อมูลเรียบร้อยแล้ว</p>
-        ) : (
-          <GenderAgeForm onSubmit={handleSubmit} />
+        {fortuneState.status === "idle" && <GenderAgeForm onSubmit={handleSubmit} />}
+        {fortuneState.status === "loading" && (
+          <p className="text-center text-sm text-zinc-500">กำลังทำนายผล...</p>
         )}
+        {fortuneState.status === "error" && (
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm text-red-600 dark:text-red-400">{fortuneState.message}</p>
+            <button
+              type="button"
+              onClick={handleRetry}
+              className="rounded-full bg-black px-6 py-3 text-white dark:bg-white dark:text-black"
+            >
+              ลองใหม่
+            </button>
+          </div>
+        )}
+        {fortuneState.status === "success" && <FortuneResultCards result={fortuneState.result} />}
       </ConfirmedPreview>
     );
   }
