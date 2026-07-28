@@ -2,7 +2,7 @@ type CaptureControlsProps =
   | { status: "idle"; onOpen: () => void }
   | { status: "opening" }
   | { status: "streaming"; onCapture: () => void; disabled: boolean }
-  | { status: "captured"; onConfirm: () => void; onRetake: () => void };
+  | { status: "captured"; onConfirm: () => void; onRetake: () => void; retakeDisabled: boolean };
 
 const primaryButtonClass =
   "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90 disabled:opacity-40 disabled:hover:bg-lacquer";
@@ -33,7 +33,12 @@ export default function CaptureControls(props: CaptureControlsProps) {
     case "captured":
       return (
         <div className="flex gap-3">
-          <button type="button" onClick={props.onRetake} className={secondaryButtonClass}>
+          <button
+            type="button"
+            onClick={props.onRetake}
+            disabled={props.retakeDisabled}
+            className={`${secondaryButtonClass} disabled:opacity-40 disabled:hover:bg-transparent`}
+          >
             ถ่ายใหม่
           </button>
           <button type="button" onClick={props.onConfirm} className={primaryButtonClass}>

@@ -5,10 +5,17 @@ import { getFaceLandmarker, setLandmarkerMode } from "@/lib/mediapipe/faceLandma
 import { mapLandmarkResult, mapTransformMatrix } from "@/lib/mediapipe/mapLandmarkResult";
 import { evaluateFacePosition } from "@/lib/mediapipe/evaluateFacePosition";
 
-export type RealtimeFaceStatus = "no-face" | "tilted" | "too-far" | "good";
+export type RealtimeFaceStatus = "no-face" | "tilted" | "too-far" | "good" | "unavailable";
 
 const CHECK_INTERVAL_MS = 250;
 const STABLE_DURATION_MS = 500;
+// Safety valve: if the real-time check never reaches "good" within this
+// window (unusual face geometry the model can't read, glasses/hat/backlight,
+// or thresholds tuned too strict for this booth), unlock the capture button
+// anyway rather than trap the visitor at the camera screen forever — the
+// one-shot post-capture check (useFaceLandmarks.detect) remains the safety
+// net either way.
+const UNAVAILABLE_TIMEOUT_MS = 10000;
 
 // Runs a throttled MediaPipe check on the live <video> while `active` is
 // true (i.e. the camera is streaming, before capture). Deliberately never
@@ -39,6 +46,13 @@ export function useRealtimeFacePosition(
 
     let cancelled = false;
     let intervalId: ReturnType<typeof setInterval> | undefined;
+    let reachedGood = false;
+
+    const timeoutId = setTimeout(() => {
+      if (cancelled || reachedGood) return;
+      if (intervalId) clearInterval(intervalId);
+      setStatus("unavailable");
+    }, UNAVAILABLE_TIMEOUT_MS);
 
     setLandmarkerMode("VIDEO")
       .then(() => getFaceLandmarker())
@@ -48,7 +62,17 @@ export function useRealtimeFacePosition(
           const video = videoRef.current;
           if (!video || video.readyState < 2) return;
 
-          const result = landmarker.detectForVideo(video, performance.now());
+          let result;
+          try {
+            result = landmarker.detectForVideo(video, performance.now());
+          } catch {
+            // The landmarker may briefly be mid-switch to IMAGE mode (the
+            // confirm-step fallback check racing this loop's teardown) —
+            // skip this tick rather than let the throw kill the interval's
+            // callback silently forever with no user-visible outcome.
+            return;
+          }
+
           const landmarks = mapLandmarkResult(result);
           const transformMatrix = mapTransformMatrix(result);
           const instant = evaluateFacePosition(landmarks, transformMatrix);
@@ -62,15 +86,19 @@ export function useRealtimeFacePosition(
           const now = performance.now();
           if (okSinceRef.current === null) okSinceRef.current = now;
           if (now - okSinceRef.current >= STABLE_DURATION_MS) {
+            reachedGood = true;
             setStatus("good");
           }
           // else: still within the debounce window — leave status as-is
         }, CHECK_INTERVAL_MS);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setStatus("unavailable");
+      });
 
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
       if (intervalId) clearInterval(intervalId);
     };
   }, [active, videoRef]);

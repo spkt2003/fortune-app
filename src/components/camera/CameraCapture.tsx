@@ -91,7 +91,7 @@ export default function CameraCapture() {
             <button
               type="button"
               onClick={handleRetry}
-              className="rounded-full bg-black px-6 py-3 text-white dark:bg-white dark:text-black"
+              className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90"
             >
               ลองใหม่
             </button>
@@ -144,7 +144,12 @@ export default function CameraCapture() {
           alt="ภาพที่ถ่ายไว้"
           className="w-full max-w-md rounded-lg"
         />
-        <CaptureControls status="captured" onConfirm={handleConfirm} onRetake={camera.retake} />
+        <CaptureControls
+          status="captured"
+          onConfirm={handleConfirm}
+          onRetake={camera.retake}
+          retakeDisabled={faceLandmarks.status === "detecting"}
+        />
         {faceLandmarks.status === "detecting" && (
           <p className="text-sm text-gold/80">กำลังตรวจสอบใบหน้า...</p>
         )}
@@ -165,7 +170,7 @@ export default function CameraCapture() {
         <CaptureControls
           status="streaming"
           onCapture={camera.capture}
-          disabled={facePositionStatus !== "good"}
+          disabled={facePositionStatus !== "good" && facePositionStatus !== "unavailable"}
         />
       ) : (
         <CaptureControls status="idle" onOpen={camera.open} />

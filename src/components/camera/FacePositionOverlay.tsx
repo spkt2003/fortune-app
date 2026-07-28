@@ -9,6 +9,7 @@ const MESSAGES: Record<RealtimeFaceStatus, string> = {
   tilted: "กรุณาหันหน้าตรงและมองกล้อง",
   "too-far": "ขยับเข้ามาใกล้กล้องอีกนิด",
   good: "อยู่นิ่งๆ... กำลังบันทึกสัดส่วน",
+  unavailable: "ถ่ายได้เลย ระบบจะตรวจสอบอีกครั้ง",
 };
 
 export default function FacePositionOverlay({ status }: FacePositionOverlayProps) {
