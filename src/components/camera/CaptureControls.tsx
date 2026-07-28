@@ -1,7 +1,7 @@
 type CaptureControlsProps =
   | { status: "idle"; onOpen: () => void }
   | { status: "opening" }
-  | { status: "streaming"; onCapture: () => void }
+  | { status: "streaming"; onCapture: () => void; disabled: boolean }
   | { status: "captured"; onConfirm: () => void; onRetake: () => void };
 
 const primaryButtonClass =
@@ -21,7 +21,12 @@ export default function CaptureControls(props: CaptureControlsProps) {
       return <p className="text-sm text-zinc-500">กำลังเปิดกล้อง...</p>;
     case "streaming":
       return (
-        <button type="button" onClick={props.onCapture} className={primaryButtonClass}>
+        <button
+          type="button"
+          onClick={props.onCapture}
+          disabled={props.disabled}
+          className={primaryButtonClass}
+        >
           แคป
         </button>
       );

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFaceLandmarks } from "@/hooks/useFaceLandmarks";
+import { useRealtimeFacePosition } from "@/hooks/useRealtimeFacePosition";
 import { computeFaceFeatures, type FaceFeatures } from "@/lib/mediapipe/computeFaceFeatures";
 import type { FortunePayload, FortuneResult, Gender } from "@/lib/fortune/payload";
 import { requestFortune } from "@/lib/fortune/requestFortune";
@@ -24,6 +25,7 @@ type FortuneState =
 export default function CameraCapture() {
   const camera = useCamera();
   const faceLandmarks = useFaceLandmarks();
+  const facePositionStatus = useRealtimeFacePosition(camera.videoRef, camera.status === "streaming");
   const [confirmIssue, setConfirmIssue] = useState<ConfirmIssue>(null);
   const [faceFeatures, setFaceFeatures] = useState<FaceFeatures | null>(null);
   const [fortuneState, setFortuneState] = useState<FortuneState>({ status: "idle" });
@@ -151,11 +153,19 @@ export default function CameraCapture() {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <CameraView videoRef={camera.videoRef} showOverlay={camera.status === "streaming"} />
+      <CameraView
+        videoRef={camera.videoRef}
+        showOverlay={camera.status === "streaming"}
+        facePositionStatus={facePositionStatus}
+      />
       {camera.status === "opening" ? (
         <CaptureControls status="opening" />
       ) : camera.status === "streaming" ? (
-        <CaptureControls status="streaming" onCapture={camera.capture} />
+        <CaptureControls
+          status="streaming"
+          onCapture={camera.capture}
+          disabled={facePositionStatus !== "good"}
+        />
       ) : (
         <CaptureControls status="idle" onOpen={camera.open} />
       )}
