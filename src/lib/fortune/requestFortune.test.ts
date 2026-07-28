@@ -33,12 +33,19 @@ describe("requestFortune", () => {
 
   it("returns ok:true with the parsed result on 200 + valid body", async () => {
     const body = { career: "a", love: "b", health: "c", finance: "d" };
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) }),
-    );
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(body) });
+    vi.stubGlobal("fetch", fetchMock);
 
     expect(await requestFortune(payload)).toEqual({ ok: true, result: body });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/fortune",
+      expect.objectContaining({
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }),
+    );
   });
 
   it("returns ok:false when the 200 body is missing a required key", async () => {
