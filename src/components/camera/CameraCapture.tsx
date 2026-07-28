@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useCamera } from "@/hooks/useCamera";
 import { useFaceLandmarks } from "@/hooks/useFaceLandmarks";
+import { useRealtimeFacePosition } from "@/hooks/useRealtimeFacePosition";
 import { computeFaceFeatures, type FaceFeatures } from "@/lib/mediapipe/computeFaceFeatures";
 import type { FortunePayload, FortuneResult, Gender } from "@/lib/fortune/payload";
 import { requestFortune } from "@/lib/fortune/requestFortune";
@@ -12,6 +13,7 @@ import CameraError from "./CameraError";
 import ConfirmedPreview from "./ConfirmedPreview";
 import GenderAgeForm from "@/components/demographics/GenderAgeForm";
 import FortuneResultCards from "@/components/fortune/FortuneResultCards";
+import ShrineFrame from "@/components/ui/ShrineFrame";
 
 type ConfirmIssue = "no-face" | "detection-error" | null;
 
@@ -24,6 +26,7 @@ type FortuneState =
 export default function CameraCapture() {
   const camera = useCamera();
   const faceLandmarks = useFaceLandmarks();
+  const facePositionStatus = useRealtimeFacePosition(camera.videoRef, camera.status === "streaming");
   const [confirmIssue, setConfirmIssue] = useState<ConfirmIssue>(null);
   const [faceFeatures, setFaceFeatures] = useState<FaceFeatures | null>(null);
   const [fortuneState, setFortuneState] = useState<FortuneState>({ status: "idle" });
@@ -80,15 +83,15 @@ export default function CameraCapture() {
       <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
         {fortuneState.status === "idle" && <GenderAgeForm onSubmit={handleSubmit} />}
         {fortuneState.status === "loading" && (
-          <p className="text-center text-sm text-zinc-500">กำลังทำนายผล...</p>
+          <p className="text-center text-sm text-gold/80">กำลังทำนายผล...</p>
         )}
         {fortuneState.status === "error" && (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{fortuneState.message}</p>
+            <p className="text-sm text-amber-400">{fortuneState.message}</p>
             <button
               type="button"
               onClick={handleRetry}
-              className="rounded-full bg-black px-6 py-3 text-white dark:bg-white dark:text-black"
+              className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110"
             >
               ลองใหม่
             </button>
@@ -134,31 +137,44 @@ export default function CameraCapture() {
     }
 
     return (
-      <div className="flex flex-col items-center gap-4">
+      <ShrineFrame className="flex flex-col items-center gap-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={camera.capturedImage}
           alt="ภาพที่ถ่ายไว้"
           className="w-full max-w-md rounded-lg"
         />
-        <CaptureControls status="captured" onConfirm={handleConfirm} onRetake={camera.retake} />
+        <CaptureControls
+          status="captured"
+          onConfirm={handleConfirm}
+          onRetake={camera.retake}
+          retakeDisabled={faceLandmarks.status === "detecting"}
+        />
         {faceLandmarks.status === "detecting" && (
-          <p className="text-sm text-zinc-500">กำลังตรวจสอบใบหน้า...</p>
+          <p className="text-sm text-gold/80">กำลังตรวจสอบใบหน้า...</p>
         )}
-      </div>
+      </ShrineFrame>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <CameraView videoRef={camera.videoRef} showOverlay={camera.status === "streaming"} />
+    <ShrineFrame className="flex flex-col items-center gap-4">
+      <CameraView
+        videoRef={camera.videoRef}
+        showOverlay={camera.status === "streaming"}
+        facePositionStatus={facePositionStatus}
+      />
       {camera.status === "opening" ? (
         <CaptureControls status="opening" />
       ) : camera.status === "streaming" ? (
-        <CaptureControls status="streaming" onCapture={camera.capture} />
+        <CaptureControls
+          status="streaming"
+          onCapture={camera.capture}
+          disabled={facePositionStatus !== "good" && facePositionStatus !== "unavailable"}
+        />
       ) : (
         <CaptureControls status="idle" onOpen={camera.open} />
       )}
-    </div>
+    </ShrineFrame>
   );
 }

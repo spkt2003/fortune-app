@@ -1,4 +1,5 @@
 import type { CameraErrorAction } from "@/lib/camera/mapCameraError";
+import ShrineFrame from "@/components/ui/ShrineFrame";
 
 interface CameraErrorProps {
   message: string;
@@ -9,13 +10,13 @@ interface CameraErrorProps {
 
 export default function CameraError({ message, action, onRetry, onClose }: CameraErrorProps) {
   return (
-    <div className="flex flex-col items-center gap-4 text-center">
-      <p className="text-sm text-red-600 dark:text-red-400">{message}</p>
+    <ShrineFrame className="flex flex-col items-center gap-4 text-center">
+      <p className="text-sm text-amber-400">{message}</p>
       {action === "retry" ? (
         <button
           type="button"
           onClick={onRetry}
-          className="rounded-full bg-black px-6 py-3 text-white dark:bg-white dark:text-black"
+          className="rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:brightness-110"
         >
           ลองใหม่
         </button>
@@ -23,11 +24,11 @@ export default function CameraError({ message, action, onRetry, onClose }: Camer
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full border border-black px-6 py-3 dark:border-white dark:text-white"
+          className="rounded-full border border-gold/60 px-6 py-3 text-gold transition hover:bg-gold/10"
         >
           ปิด
         </button>
       )}
-    </div>
+    </ShrineFrame>
   );
 }

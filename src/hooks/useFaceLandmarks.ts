@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { NormalizedLandmark } from "@mediapipe/tasks-vision";
-import { getFaceLandmarker } from "@/lib/mediapipe/faceLandmarker";
+import { getFaceLandmarker, setLandmarkerMode } from "@/lib/mediapipe/faceLandmarker";
 import { mapLandmarkResult } from "@/lib/mediapipe/mapLandmarkResult";
 
 export type FaceLandmarksStatus = "idle" | "detecting";
@@ -24,6 +24,7 @@ export function useFaceLandmarks(): UseFaceLandmarksResult {
   const detect = useCallback(async (imageDataUrl: string) => {
     setStatus("detecting");
     try {
+      await setLandmarkerMode("IMAGE");
       const landmarker = await getFaceLandmarker();
       const image = await loadImage(imageDataUrl);
       const result = landmarker.detect(image);

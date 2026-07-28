@@ -1,9 +1,13 @@
+import type { RealtimeFaceStatus } from "@/hooks/useRealtimeFacePosition";
+import FacePositionOverlay from "./FacePositionOverlay";
+
 interface CameraViewProps {
   videoRef: React.RefObject<HTMLVideoElement | null>;
   showOverlay: boolean;
+  facePositionStatus?: RealtimeFaceStatus;
 }
 
-export default function CameraView({ videoRef, showOverlay }: CameraViewProps) {
+export default function CameraView({ videoRef, showOverlay, facePositionStatus }: CameraViewProps) {
   return (
     <div className="relative aspect-video w-full max-w-md overflow-hidden rounded-lg bg-black">
       <video
@@ -25,12 +29,13 @@ export default function CameraView({ videoRef, showOverlay }: CameraViewProps) {
             rx="28"
             ry="38"
             fill="none"
-            stroke="white"
-            strokeOpacity="0.5"
+            stroke="#d97757"
+            strokeOpacity="0.6"
             strokeWidth="1.5"
           />
         </svg>
       )}
+      {showOverlay && facePositionStatus && <FacePositionOverlay status={facePositionStatus} />}
     </div>
   );
 }

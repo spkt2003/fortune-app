@@ -8,7 +8,7 @@ export default function Home() {
   const [accepted, setAccepted] = useState(false);
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 p-6 dark:bg-black print:bg-white">
+    <div className="flex flex-1 items-center justify-center p-6 print:bg-white">
       {accepted ? <CameraCapture /> : <IntroConsent onAccept={() => setAccepted(true)} />}
     </div>
   );
