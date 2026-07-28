@@ -5,9 +5,9 @@ type CaptureControlsProps =
   | { status: "captured"; onConfirm: () => void; onRetake: () => void };
 
 const primaryButtonClass =
-  "rounded-full bg-black px-6 py-3 text-white dark:bg-white dark:text-black";
+  "rounded-full bg-lacquer px-6 py-3 font-medium text-parchment transition hover:bg-lacquer/90 disabled:opacity-40 disabled:hover:bg-lacquer";
 const secondaryButtonClass =
-  "rounded-full border border-black px-6 py-3 dark:border-white dark:text-white";
+  "rounded-full border border-gold/60 px-6 py-3 text-gold transition hover:bg-gold/10";
 
 export default function CaptureControls(props: CaptureControlsProps) {
   switch (props.status) {
@@ -18,7 +18,7 @@ export default function CaptureControls(props: CaptureControlsProps) {
         </button>
       );
     case "opening":
-      return <p className="text-sm text-zinc-500">กำลังเปิดกล้อง...</p>;
+      return <p className="text-sm text-gold/80">กำลังเปิดกล้อง...</p>;
     case "streaming":
       return (
         <button

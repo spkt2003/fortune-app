@@ -13,6 +13,7 @@ import CameraError from "./CameraError";
 import ConfirmedPreview from "./ConfirmedPreview";
 import GenderAgeForm from "@/components/demographics/GenderAgeForm";
 import FortuneResultCards from "@/components/fortune/FortuneResultCards";
+import ShrineFrame from "@/components/ui/ShrineFrame";
 
 type ConfirmIssue = "no-face" | "detection-error" | null;
 
@@ -136,7 +137,7 @@ export default function CameraCapture() {
     }
 
     return (
-      <div className="flex flex-col items-center gap-4">
+      <ShrineFrame className="flex flex-col items-center gap-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={camera.capturedImage}
@@ -145,14 +146,14 @@ export default function CameraCapture() {
         />
         <CaptureControls status="captured" onConfirm={handleConfirm} onRetake={camera.retake} />
         {faceLandmarks.status === "detecting" && (
-          <p className="text-sm text-zinc-500">กำลังตรวจสอบใบหน้า...</p>
+          <p className="text-sm text-gold/80">กำลังตรวจสอบใบหน้า...</p>
         )}
-      </div>
+      </ShrineFrame>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <ShrineFrame className="flex flex-col items-center gap-4">
       <CameraView
         videoRef={camera.videoRef}
         showOverlay={camera.status === "streaming"}
@@ -169,6 +170,6 @@ export default function CameraCapture() {
       ) : (
         <CaptureControls status="idle" onOpen={camera.open} />
       )}
-    </div>
+    </ShrineFrame>
   );
 }
