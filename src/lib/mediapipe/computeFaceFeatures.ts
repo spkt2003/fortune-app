@@ -46,6 +46,11 @@ const LOWER_LIP_OUTER_BOTTOM = 17;
 const JAW_BAND_MIN_FRACTION = 0.72;
 const JAW_BAND_MAX_FRACTION = 0.9;
 
+// Guards ratio denominators that can collapse to 0 on degenerate landmark
+// output (e.g. eye clusters reported at the same x), keeping every feature
+// finite so it can never fail validateFortunePayload's Number.isFinite check.
+const MIN_RATIO_DENOMINATOR = 1e-6;
+
 function pointsFor(landmarks: NormalizedLandmark[], indices: number[]): Point2D[] {
   return indices.map((i) => landmarks[i]);
 }
@@ -125,11 +130,11 @@ export function computeFaceFeatures(landmarks: NormalizedLandmark[]): FaceFeatur
     eyeDistanceToFaceWidthRatio: eyeDistance / faceWidth,
     leftEyeWidthToFaceWidthRatio: width(leftEyePoints) / faceWidth,
     rightEyeWidthToFaceWidthRatio: width(rightEyePoints) / faceWidth,
-    eyebrowGapToEyeDistanceRatio: eyebrowGap / eyeDistance,
+    eyebrowGapToEyeDistanceRatio: eyebrowGap / Math.max(eyeDistance, MIN_RATIO_DENOMINATOR),
     noseWidthToFaceWidthRatio: noseWidth / faceWidth,
     noseLengthToFaceHeightRatio: noseLength / faceHeight,
     mouthWidthToFaceWidthRatio: mouthWidth / faceWidth,
-    upperLipToLowerLipThicknessRatio: upperLipThickness / lowerLipThickness,
+    upperLipToLowerLipThicknessRatio: upperLipThickness / Math.max(lowerLipThickness, MIN_RATIO_DENOMINATOR),
     jawWidthToCheekboneWidthRatio: jawWidth / faceWidth,
     foreheadHeightToFaceHeightRatio: Math.abs(browLineY - ovalTopY) / faceHeight,
     leftFaceHalfWidthRatio: leftOvalExtent / halfWidthTotal,
