@@ -1,4 +1,4 @@
-export type CameraErrorType = "permission-denied" | "not-found" | "unsupported" | "unknown";
+export type CameraErrorType = "permission-denied" | "not-found" | "in-use" | "unsupported" | "unknown";
 export type CameraErrorAction = "retry" | "close";
 
 export interface CameraErrorInfo {
@@ -16,6 +16,7 @@ export class UnsupportedCameraError extends Error {
 
 const PERMISSION_DENIED_NAMES = new Set(["NotAllowedError", "PermissionDeniedError"]);
 const NOT_FOUND_NAMES = new Set(["NotFoundError", "DevicesNotFoundError"]);
+const IN_USE_NAMES = new Set(["NotReadableError", "TrackStartError"]);
 
 function getErrorName(err: unknown): string | undefined {
   // Duck-typed on purpose: the real getUserMedia rejection is a DOMException,
@@ -44,6 +45,14 @@ export function mapCameraError(err: unknown): CameraErrorInfo {
     return {
       type: "not-found",
       message: "ไม่พบกล้องในอุปกรณ์นี้ กรุณาตรวจสอบการเชื่อมต่อกล้อง",
+      action: "retry",
+    };
+  }
+
+  if (name && IN_USE_NAMES.has(name)) {
+    return {
+      type: "in-use",
+      message: "กล้องกำลังถูกใช้งานโดยโปรแกรมอื่นอยู่ กรุณาปิดโปรแกรม/แท็บอื่นที่ใช้กล้อง แล้วลองใหม่อีกครั้ง",
       action: "retry",
     };
   }

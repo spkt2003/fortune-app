@@ -48,8 +48,23 @@ describe("mapCameraError", () => {
     });
   });
 
-  it("falls back to unknown/retry for unrecognized errors", () => {
+  it("maps NotReadableError to in-use with retry action", () => {
     const result = mapCameraError(errorWithName("NotReadableError"));
+    expect(result).toEqual({
+      type: "in-use",
+      message: "กล้องกำลังถูกใช้งานโดยโปรแกรมอื่นอยู่ กรุณาปิดโปรแกรม/แท็บอื่นที่ใช้กล้อง แล้วลองใหม่อีกครั้ง",
+      action: "retry",
+    });
+  });
+
+  it("maps TrackStartError to in-use with retry action", () => {
+    const result = mapCameraError(errorWithName("TrackStartError"));
+    expect(result.type).toBe("in-use");
+    expect(result.action).toBe("retry");
+  });
+
+  it("falls back to unknown/retry for unrecognized errors", () => {
+    const result = mapCameraError(errorWithName("SomeOtherWeirdError"));
     expect(result).toEqual({
       type: "unknown",
       message: "เกิดข้อผิดพลาดกับกล้อง กรุณาลองใหม่อีกครั้ง",
