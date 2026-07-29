@@ -17,7 +17,7 @@ export interface UseCameraResult {
   open: () => Promise<void>;
   capture: () => void;
   confirm: () => void;
-  retake: () => void;
+  retake: () => Promise<void>;
   dismissError: () => void;
 }
 
@@ -33,21 +33,29 @@ export function useCamera(): UseCameraResult {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [error, setError] = useState<CameraErrorInfo | null>(null);
 
-  const open = useCallback(async () => {
-    setStatus("opening");
-    setError(null);
+  // Shared by open() and retake() (when retake needs to re-acquire a stream
+  // that was already stopped after confirm()). Returns whether it succeeded;
+  // on failure it has already set the error/status state itself.
+  const requestStream = useCallback(async (): Promise<boolean> => {
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new UnsupportedCameraError();
       }
       const stream = await navigator.mediaDevices.getUserMedia(VIDEO_CONSTRAINTS);
       streamRef.current = stream;
-      setStatus("streaming");
+      return true;
     } catch (err) {
       setError(mapCameraError(err));
       setStatus("error");
+      return false;
     }
   }, []);
+
+  const open = useCallback(async () => {
+    setStatus("opening");
+    setError(null);
+    if (await requestStream()) setStatus("streaming");
+  }, [requestStream]);
 
   // Re-attach the persisted stream whenever a <video> element mounts while
   // streaming (initial open, and after retake re-mounts CameraView) — never
@@ -60,7 +68,10 @@ export function useCamera(): UseCameraResult {
 
   const capture = useCallback(() => {
     const video = videoRef.current;
-    if (!video) return;
+    // videoWidth/videoHeight stay 0 until the video element has decoded its
+    // first frame; capturing before that produces a blank image that later
+    // gets misreported as "no face found" instead of the real cause.
+    if (!video || video.videoWidth === 0 || video.videoHeight === 0) return;
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -74,14 +85,28 @@ export function useCamera(): UseCameraResult {
     setStatus("captured");
   }, []);
 
+  // Once a photo is confirmed, only the still image is shown from here on
+  // (results, printing) — stop the live stream so the webcam's hardware LED
+  // turns off instead of staying lit for the rest of the session.
   const confirm = useCallback(() => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
     setStatus("confirmed");
   }, []);
 
-  const retake = useCallback(() => {
+  const retake = useCallback(async () => {
     setCapturedImage(null);
-    setStatus("streaming");
-  }, []);
+    const streamIsLive = streamRef.current?.getTracks().some((track) => track.readyState === "live");
+    if (streamIsLive) {
+      setStatus("streaming");
+      return;
+    }
+    // Stream was stopped by confirm() (retake from the confirmed/results
+    // screen) — re-request it rather than showing a frozen/black feed.
+    setStatus("opening");
+    setError(null);
+    if (await requestStream()) setStatus("streaming");
+  }, [requestStream]);
 
   const dismissError = useCallback(() => {
     setError(null);
