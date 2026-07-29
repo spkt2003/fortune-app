@@ -85,19 +85,6 @@ npm run dev
 | `npm run lint`   | ตรวจ ESLint                   |
 | `npm test`       | รัน unit tests ด้วย Vitest    |
 
-## ✅ Testing
-
-- **Unit tests** ครอบคลุมฟังก์ชันคำนวณ face feature, validation, API route logic เป็นหลัก — รันด้วย `npm test`
-- **Manual booth testing checklist** ดูที่ [`TESTING.md`](./TESTING.md) สำหรับรายการทดสอบที่ต้องรันจริงบนเครื่อง/กล้องที่หน้างาน Open House ก่อนใช้งานจริง
-
-## ☁️ Deploy บน Vercel
-
-1. เชื่อม repo นี้กับ Vercel (auto-deploy ทุกครั้งที่ push เข้า `main`)
-2. เพิ่ม Environment Variable `GEMINI_API_KEY` ที่ **Settings → Environment Variables** (ครอบคลุม Production)
-3. หลังเพิ่ม/แก้ env var ต้อง **Redeploy** ใหม่เสมอ — ไม่งั้นค่าใหม่จะยังไม่มีผล
-
-รองรับ fallback รัน `npm run dev` บนเครื่อง local ที่หน้างานได้ ถ้าเน็ตที่บูธมีปัญหากับ Vercel
-
 ## 🔐 ความเป็นส่วนตัว (PDPA)
 
 - ไม่มีฐานข้อมูล ไม่บันทึกภาพถ่ายหรือผลลัพธ์ใดๆ หลังแสดงผล
