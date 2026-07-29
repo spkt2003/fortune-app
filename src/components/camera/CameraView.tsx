@@ -9,7 +9,7 @@ interface CameraViewProps {
 
 export default function CameraView({ videoRef, showOverlay, facePositionStatus }: CameraViewProps) {
   return (
-    <div className="relative aspect-video w-full max-w-md overflow-hidden rounded-lg bg-black">
+    <div className="relative aspect-video w-full max-w-2xl overflow-hidden rounded-lg bg-black">
       <video
         ref={videoRef}
         autoPlay

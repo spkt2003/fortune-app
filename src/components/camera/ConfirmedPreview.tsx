@@ -13,7 +13,7 @@ export default function ConfirmedPreview({ imageSrc, onRetake, children }: Confi
       <img
         src={imageSrc}
         alt="ภาพที่ยืนยันแล้ว"
-        className="w-full max-w-md rounded-lg print:hidden"
+        className="w-full max-w-2xl rounded-lg print:hidden"
       />
       <p className="text-center text-sm text-gold print:hidden">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
       {children}

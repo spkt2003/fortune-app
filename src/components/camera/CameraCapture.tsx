@@ -146,7 +146,7 @@ export default function CameraCapture() {
         <img
           src={camera.capturedImage}
           alt="ภาพที่ถ่ายไว้"
-          className="w-full max-w-md rounded-lg"
+          className="w-full max-w-2xl rounded-lg"
         />
         <CaptureControls
           status="captured"
