@@ -23,9 +23,15 @@ function isErrorBody(value: unknown): value is { error: string } {
   return typeof (value as Record<string, unknown>).error === "string";
 }
 
-export async function requestFortune(payload: FortunePayload): Promise<FortuneRequestResult> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+export async function requestFortune(
+  payload: FortunePayload,
+  options?: { signal?: AbortSignal },
+): Promise<FortuneRequestResult> {
+  const timeoutController = new AbortController();
+  const timeoutId = setTimeout(() => timeoutController.abort(), REQUEST_TIMEOUT_MS);
+  const signal = options?.signal
+    ? AbortSignal.any([timeoutController.signal, options.signal])
+    : timeoutController.signal;
 
   let response: Response;
   try {
@@ -33,7 +39,7 @@ export async function requestFortune(payload: FortunePayload): Promise<FortuneRe
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      signal: controller.signal,
+      signal,
     });
   } catch {
     return { ok: false, message: GENERIC_ERROR_MESSAGE };

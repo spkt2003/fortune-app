@@ -128,6 +128,25 @@ describe("requestFortune", () => {
     }
   });
 
+  it("aborts immediately when the caller-provided signal fires, without waiting for the internal timeout", async () => {
+    const externalController = new AbortController();
+    const fetchMock = vi.fn((_url: string, init: RequestInit) => {
+      return new Promise((_resolve, reject) => {
+        init.signal?.addEventListener("abort", () => {
+          const abortError = new Error("The operation was aborted");
+          abortError.name = "AbortError";
+          reject(abortError);
+        });
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const resultPromise = requestFortune(payload, { signal: externalController.signal });
+    externalController.abort();
+
+    expect(await resultPromise).toEqual({ ok: false, message: GENERIC_ERROR });
+  });
+
   it("returns ok:false when fetch itself throws (network error)", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")));
 
