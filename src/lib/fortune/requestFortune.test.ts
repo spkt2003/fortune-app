@@ -60,17 +60,72 @@ describe("requestFortune", () => {
     expect(await requestFortune(payload)).toEqual({ ok: false, message: GENERIC_ERROR });
   });
 
-  it("returns ok:false when the response status is not ok (e.g. 429)", async () => {
+  it("forwards the server's error message when the response status is not ok (e.g. 429)", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
         ok: false,
         status: 429,
-        json: () => Promise.resolve({ error: "rate limited" }),
+        json: () => Promise.resolve({ error: "ผู้ใช้งานเยอะในขณะนี้ กรุณาลองใหม่อีกครั้ง" }),
+      }),
+    );
+
+    expect(await requestFortune(payload)).toEqual({
+      ok: false,
+      message: "ผู้ใช้งานเยอะในขณะนี้ กรุณาลองใหม่อีกครั้ง",
+    });
+  });
+
+  it("falls back to the generic message when a non-ok response body has no error string", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: () => Promise.resolve({}),
       }),
     );
 
     expect(await requestFortune(payload)).toEqual({ ok: false, message: GENERIC_ERROR });
+  });
+
+  it("falls back to the generic message when a non-ok response body isn't JSON", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: () => Promise.reject(new Error("bad json")),
+      }),
+    );
+
+    expect(await requestFortune(payload)).toEqual({ ok: false, message: GENERIC_ERROR });
+  });
+
+  it("aborts and returns ok:false if the request takes longer than the timeout", async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchMock = vi.fn((_url: string, init: RequestInit) => {
+        return new Promise((_resolve, reject) => {
+          init.signal?.addEventListener("abort", () => {
+            const abortError = new Error("The operation was aborted");
+            abortError.name = "AbortError";
+            reject(abortError);
+          });
+        });
+      });
+      vi.stubGlobal("fetch", fetchMock);
+
+      const resultPromise = requestFortune(payload);
+      await vi.runAllTimersAsync();
+
+      expect(await resultPromise).toEqual({ ok: false, message: GENERIC_ERROR });
+      expect(fetchMock.mock.calls[0][1]).toEqual(
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("returns ok:false when fetch itself throws (network error)", async () => {
