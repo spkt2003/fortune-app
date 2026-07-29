@@ -8,8 +8,15 @@ export default function Home() {
   const [accepted, setAccepted] = useState(false);
 
   return (
-    <div className="flex flex-1 items-center justify-center p-6 print:bg-white">
-      {accepted ? <CameraCapture /> : <IntroConsent onAccept={() => setAccepted(true)} />}
-    </div>
+    <main className="flex flex-1 items-center justify-center p-6 print:bg-white">
+      {accepted ? (
+        <>
+          <h1 className="sr-only">ระบบทำนายโหงวเฮ้ง — ถ่ายภาพใบหน้าเพื่อรับคำทำนาย</h1>
+          <CameraCapture />
+        </>
+      ) : (
+        <IntroConsent onAccept={() => setAccepted(true)} />
+      )}
+    </main>
   );
 }

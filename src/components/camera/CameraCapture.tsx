@@ -91,7 +91,7 @@ export default function CameraCapture() {
         )}
         {fortuneState.status === "error" && (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-sm text-amber-400">{fortuneState.message}</p>
+            <p role="alert" className="text-sm text-amber-400">{fortuneState.message}</p>
             <button
               type="button"
               onClick={handleRetry}
