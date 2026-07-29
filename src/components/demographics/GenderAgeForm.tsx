@@ -38,7 +38,7 @@ export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
       className="flex w-full max-w-md flex-col gap-4 rounded-lg border border-gold/40 bg-panel p-6 text-parchment"
     >
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-semibold tracking-wide text-gold/80">เพศ</legend>
+        <legend className="text-sm font-semibold tracking-wide text-gold">เพศ</legend>
         <div className="flex gap-4">
           {GENDER_OPTIONS.map((option) => (
             <label key={option.value} className="flex items-center gap-2 text-parchment">
@@ -56,15 +56,18 @@ export default function GenderAgeForm({ onSubmit }: GenderAgeFormProps) {
       </fieldset>
 
       <label className="flex flex-col gap-2">
-        <span className="text-sm font-semibold tracking-wide text-gold/80">อายุ</span>
+        <span className="text-sm font-semibold tracking-wide text-gold">อายุ</span>
         <input
           type="number"
+          min={1}
+          max={120}
+          step={1}
           value={ageInput}
           onChange={(event) => setAgeInput(event.target.value)}
           onBlur={() => setAgeTouched(true)}
           className="rounded-lg border border-gold/30 bg-ink/40 px-4 py-2 text-parchment"
         />
-        {ageTouched && !ageValid && (
+        {(ageTouched || ageInput !== "") && !ageValid && (
           <span className="text-sm text-amber-400">กรุณากรอกอายุระหว่าง 1-120 ปี</span>
         )}
       </label>

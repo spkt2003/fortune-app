@@ -27,7 +27,7 @@ export default function FortuneResultCards({ result }: FortuneResultCardsProps) 
             key={card.key}
             className="flex flex-col gap-2 rounded-2xl border border-gold/30 bg-panel p-5 shadow-[0_0_20px_-6px_rgba(217,119,87,0.3)] print:border print:border-zinc-300 print:bg-white print:shadow-none print:break-inside-avoid"
           >
-            <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-gold/80 print:text-black">
+            <h3 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-gold print:text-black">
               <span aria-hidden>{card.emoji}</span>
               {card.label}
             </h3>

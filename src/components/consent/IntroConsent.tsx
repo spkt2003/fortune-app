@@ -16,7 +16,7 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
       </div>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold tracking-wide text-gold/80">วิธีใช้งาน</h2>
+        <h2 className="text-sm font-semibold tracking-wide text-gold">วิธีใช้งาน</h2>
         <ol className="list-decimal space-y-1 pl-5 text-parchment">
           <li>เปิดกล้องและถ่ายภาพใบหน้าของคุณ</li>
           <li>ระบบจะวิเคราะห์ลักษณะใบหน้าโดยอัตโนมัติ</li>
@@ -29,7 +29,7 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
       </section>
 
       <section className="flex flex-col gap-2 rounded-lg border border-gold/20 bg-ink/40 p-4">
-        <h2 className="text-sm font-semibold tracking-wide text-gold/80">
+        <h2 className="text-sm font-semibold tracking-wide text-gold">
           ข้อตกลงความเป็นส่วนตัว (PDPA)
         </h2>
         <ul className="list-disc space-y-1 pl-5 text-sm text-parchment">

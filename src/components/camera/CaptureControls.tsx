@@ -18,7 +18,7 @@ export default function CaptureControls(props: CaptureControlsProps) {
         </button>
       );
     case "opening":
-      return <p className="text-sm text-gold/80">กำลังเปิดกล้อง...</p>;
+      return <p className="text-sm text-gold">กำลังเปิดกล้อง...</p>;
     case "streaming":
       return (
         <button

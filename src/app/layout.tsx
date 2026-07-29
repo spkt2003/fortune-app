@@ -15,8 +15,8 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: "Fortune App",
-  description: "Co-op open house fortune-telling app",
+  title: "ระบบทำนายโหงวเฮ้ง",
+  description: "แอปทำนายโหงวเฮ้งจากลักษณะใบหน้า สำหรับงาน Co-op Open House",
 };
 
 export default function RootLayout({

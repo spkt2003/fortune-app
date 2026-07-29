@@ -87,7 +87,7 @@ export default function CameraCapture() {
       <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
         {fortuneState.status === "idle" && <GenderAgeForm onSubmit={handleSubmit} />}
         {fortuneState.status === "loading" && (
-          <p className="text-center text-sm text-gold/80">กำลังทำนายผล...</p>
+          <p className="text-center text-sm text-gold">กำลังทำนายผล...</p>
         )}
         {fortuneState.status === "error" && (
           <div className="flex flex-col items-center gap-3">
@@ -155,7 +155,7 @@ export default function CameraCapture() {
           retakeDisabled={faceLandmarks.status === "detecting"}
         />
         {faceLandmarks.status === "detecting" && (
-          <p className="text-sm text-gold/80">กำลังตรวจสอบใบหน้า...</p>
+          <p className="text-sm text-gold">กำลังตรวจสอบใบหน้า...</p>
         )}
       </ShrineFrame>
     );

@@ -81,7 +81,7 @@ export function useCamera(): UseCameraResult {
     // and does not affect drawImage's source pixels. Never call ctx.scale(-1, 1)
     // here: the captured image must match the user's real left/right.
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    setCapturedImage(canvas.toDataURL("image/png"));
+    setCapturedImage(canvas.toDataURL("image/jpeg", 0.92));
     setStatus("captured");
   }, []);
 

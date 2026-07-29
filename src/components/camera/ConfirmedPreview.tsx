@@ -15,7 +15,7 @@ export default function ConfirmedPreview({ imageSrc, onRetake, children }: Confi
         alt="ภาพที่ยืนยันแล้ว"
         className="w-full max-w-md rounded-lg print:hidden"
       />
-      <p className="text-center text-sm text-gold/80 print:hidden">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
+      <p className="text-center text-sm text-gold print:hidden">ตรวจพบใบหน้าเรียบร้อยแล้ว</p>
       {children}
       <button
         type="button"
