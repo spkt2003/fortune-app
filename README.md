@@ -1,40 +1,110 @@
-# Fortune App
+# 🔮 ระบบทำนายโหงวเฮ้ง (Fortune App)
 
-Co-op open house project: scan a face via webcam, get a for-fun fortune reading combining face features with birthdate/blood type/favorite color. See [`CLAUDE.md`](./CLAUDE.md) for full project context and rules.
+เว็บแอปสแกนใบหน้าผ่านกล้อง แล้วรับคำทำนายแบบ **โหงวเฮ้ง** (การทำนายจากลักษณะใบหน้าล้วนๆ) — ทำขึ้นสำหรับใช้แสดงในงาน **Co-op Open House** ของมหาวิทยาลัย
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+> เพื่อความบันเทิงเท่านั้น ไม่ใช่การพยากรณ์ทางวิทยาศาสตร์
 
-## Getting Started
+โปรเจกต์นี้ตั้งใจตัดขอบเขตให้แคบและตรงตามศาสตร์โหงวเฮ้งจริง — รับแค่ **ภาพใบหน้า + เพศ + อายุ** เท่านั้น ไม่ผสมวันเกิด กรุ๊ปเลือด หรือราศีแบบดูดวงทั่วไป
 
-First, run the development server:
+---
+
+## ✨ ฟีเจอร์หลัก
+
+- 📷 ถ่ายภาพใบหน้าผ่านกล้องเว็บแคม พร้อม overlay แจ้งเตือนตำแหน่งใบหน้าแบบเรียลไทม์ (เอียง/ไกลไป/พร้อมถ่าย)
+- 🧠 วิเคราะห์ลักษณะใบหน้าด้วย MediaPipe **บนเบราว์เซอร์ของผู้ใช้เท่านั้น** — ไม่มีการส่งภาพถ่ายจริงออกจากเครื่อง
+- 🤖 ส่งเฉพาะค่าตัวเลขลักษณะใบหน้า (ไม่ใช่รูปภาพ) ไปให้ Gemini AI ประกอบคำทำนาย
+- 📜 แสดงผลคำทำนาย 4 ด้าน: การงาน / ความรัก / สุขภาพ / การเงิน
+- 🖨️ พิมพ์ผลลัพธ์ได้ทันทีผ่าน `window.print()` ของเบราว์เซอร์ (ไม่มีการอัปโหลด/บันทึกไฟล์ที่ server)
+- 🔒 ไม่มีฐานข้อมูล ไม่มีระบบสมาชิก ไม่เก็บภาพหรือข้อมูลระบุตัวตนใดๆ — เป็นไปตามหน้า PDPA consent ที่บังคับให้ผู้ใช้กดยอมรับทุกครั้งที่เข้าใช้งาน
+
+## 🧰 Tech Stack
+
+| ส่วน            | เทคโนโลยี                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Framework       | [Next.js](https://nextjs.org) (App Router + API Routes)                                     |
+| Face detection  | [`@mediapipe/tasks-vision`](https://ai.google.dev/edge/mediapipe) — รันฝั่ง client ล้วนๆ    |
+| AI ทำนาย        | Gemini API (Flash model) — เรียกจาก server-side API route เท่านั้น                         |
+| Styling         | Tailwind CSS v4 (ธีม "Oriental Premium" — charcoal/copper)                                  |
+| Testing         | Vitest (unit tests)                                                                          |
+| Deploy          | Vercel                                                                                       |
+
+## 🗺️ Data Flow
+
+```mermaid
+flowchart TD
+    Z[หน้าแนะนำ + PDPA consent] --> A[เปิดกล้อง / ถ่ายภาพ]
+    A --> B[MediaPipe: landmark to face feature ทั้งหมดในเบราว์เซอร์]
+    B --> C[รวมกับ เพศ + อายุ]
+    C --> D[/api/fortune]
+    D --> E[Gemini Flash]
+    E --> F[Parse JSON]
+    F --> G[แสดงผลคำทำนาย 4 การ์ด]
+    G --> H[window.print - พิมพ์ / Save PDF]
+```
+
+มีเพียง **ค่าตัวเลขลักษณะใบหน้า + เพศ + อายุ** เท่านั้นที่ถูกส่งออกจากเครื่องผู้ใช้ — ไม่มีการส่งภาพถ่ายจริงออกไปที่ใดทั้งสิ้น
+
+## 🚀 เริ่มต้นใช้งาน (Local Development)
+
+### สิ่งที่ต้องมี
+
+- Node.js 20+
+- API key จาก [Google AI Studio](https://aistudio.google.com/) สำหรับ Gemini API
+
+### ติดตั้ง
+
+```bash
+npm install
+```
+
+### ตั้งค่า Environment Variable
+
+สร้างไฟล์ `.env.local` ที่ root ของโปรเจกต์:
+
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+> ห้าม commit ไฟล์นี้เข้า git เด็ดขาด (อยู่ใน `.gitignore` แล้ว)
+
+### รันเซิร์ฟเวอร์
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+เปิด [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📜 Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command         | คำอธิบาย                   |
+| ---------------- | ----------------------------- |
+| `npm run dev`    | รัน dev server                |
+| `npm run build`  | build สำหรับ production       |
+| `npm start`      | รัน production build          |
+| `npm run lint`   | ตรวจ ESLint                   |
+| `npm test`       | รัน unit tests ด้วย Vitest    |
 
-## Learn More
+## ✅ Testing
 
-To learn more about Next.js, take a look at the following resources:
+- **Unit tests** ครอบคลุมฟังก์ชันคำนวณ face feature, validation, API route logic เป็นหลัก — รันด้วย `npm test`
+- **Manual booth testing checklist** ดูที่ [`TESTING.md`](./TESTING.md) สำหรับรายการทดสอบที่ต้องรันจริงบนเครื่อง/กล้องที่หน้างาน Open House ก่อนใช้งานจริง
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ☁️ Deploy บน Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. เชื่อม repo นี้กับ Vercel (auto-deploy ทุกครั้งที่ push เข้า `main`)
+2. เพิ่ม Environment Variable `GEMINI_API_KEY` ที่ **Settings → Environment Variables** (ครอบคลุม Production)
+3. หลังเพิ่ม/แก้ env var ต้อง **Redeploy** ใหม่เสมอ — ไม่งั้นค่าใหม่จะยังไม่มีผล
 
-## Deploy on Vercel
+รองรับ fallback รัน `npm run dev` บนเครื่อง local ที่หน้างานได้ ถ้าเน็ตที่บูธมีปัญหากับ Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔐 ความเป็นส่วนตัว (PDPA)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- ไม่มีฐานข้อมูล ไม่บันทึกภาพถ่ายหรือผลลัพธ์ใดๆ หลังแสดงผล
+- ภาพถ่ายถูกประมวลผลเฉพาะในเบราว์เซอร์ของผู้ใช้ (on-device) เพื่อคำนวณลักษณะใบหน้าเป็นตัวเลขเท่านั้น
+- ไม่มีระบบ login/บัญชีผู้ใช้ ไม่มีการติดตามผู้ใช้ข้ามครั้ง
+- ผู้ใช้ทุกคนต้องกดยอมรับหน้า PDPA consent ก่อนเข้าใช้งานทุกครั้ง (ไม่มีการจำสถานะ "ยอมรับแล้ว" ข้ามผู้ใช้)
+
+## 🎓 เครดิต
+
+ผลงานของ **นายธนกร ปิ่นสุข** นักศึกษาสาขาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียว
