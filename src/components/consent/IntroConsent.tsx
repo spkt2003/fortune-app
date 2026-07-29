@@ -16,7 +16,9 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
       </div>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold tracking-wide text-gold">วิธีใช้งาน</h2>
+        <h2 className="text-sm font-semibold tracking-wide text-gold">
+          วิธีใช้งาน
+        </h2>
         <ol className="list-decimal space-y-1 pl-5 text-parchment">
           <li>เปิดกล้องและถ่ายภาพใบหน้าของคุณ</li>
           <li>ระบบจะวิเคราะห์ลักษณะใบหน้าโดยอัตโนมัติ</li>
@@ -33,15 +35,20 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
           ข้อตกลงความเป็นส่วนตัว (PDPA)
         </h2>
         <ul className="list-disc space-y-1 pl-5 text-sm text-parchment">
-          <li>ระบบไม่บันทึกหรือจัดเก็บภาพถ่ายของคุณ ไม่มีฐานข้อมูลใดๆ ทั้งสิ้น</li>
           <li>
-            ภาพจะถูกประมวลผลเฉพาะในเครื่อง/เบราว์เซอร์ของคุณเท่านั้น (on-device) เพื่อคำนวณลักษณะใบหน้าเป็นค่าตัวเลข
+            ระบบไม่บันทึกหรือจัดเก็บภาพถ่ายของคุณ ไม่มีฐานข้อมูลใดๆ ทั้งสิ้น
           </li>
           <li>
-            มีเพียงค่าตัวเลขลักษณะใบหน้า + เพศ + อายุ ที่ถูกส่งไปยังระบบ AI เพื่อสร้างคำทำนาย
-            และจะไม่ถูกบันทึกเก็บไว้หลังแสดงผลลัพธ์
+            ภาพจะถูกประมวลผลเฉพาะในเครื่อง/เบราว์เซอร์ของคุณเท่านั้น (on-device)
+            เพื่อคำนวณลักษณะใบหน้าเป็นค่าตัวเลข
           </li>
-          <li>ไม่มีการเก็บชื่อ ข้อมูลติดต่อ หรือข้อมูลที่สามารถระบุตัวตนได้อื่นใด</li>
+          <li>
+            มีเพียงค่าตัวเลขลักษณะใบหน้า + เพศ + อายุ ที่ถูกส่งไปยังระบบ AI
+            เพื่อสร้างคำทำนาย และจะไม่ถูกบันทึกเก็บไว้หลังแสดงผลลัพธ์
+          </li>
+          <li>
+            ไม่มีการเก็บชื่อ ข้อมูลติดต่อ หรือข้อมูลที่สามารถระบุตัวตนได้อื่นใด
+          </li>
           <li>ไม่มีระบบ login/บัญชีผู้ใช้ ไม่มีการติดตามผู้ใช้ข้ามครั้ง</li>
         </ul>
       </section>
@@ -56,7 +63,7 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
 
       <p className="text-center text-xs text-parchment/50">
         ผลงานของ นายธนกร ปิ่นสุข นักศึกษาสาขาวิทยาการคอมพิวเตอร์
-        คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียว
+        คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียวเฉลิมพระเกียรติ
       </p>
     </ShrineFrame>
   );

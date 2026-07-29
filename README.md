@@ -19,14 +19,14 @@
 
 ## 🧰 Tech Stack
 
-| ส่วน            | เทคโนโลยี                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| Framework       | [Next.js](https://nextjs.org) (App Router + API Routes)                                     |
-| Face detection  | [`@mediapipe/tasks-vision`](https://ai.google.dev/edge/mediapipe) — รันฝั่ง client ล้วนๆ    |
-| AI ทำนาย        | Gemini API (Flash model) — เรียกจาก server-side API route เท่านั้น                         |
-| Styling         | Tailwind CSS v4 (ธีม "Oriental Premium" — charcoal/copper)                                  |
-| Testing         | Vitest (unit tests)                                                                          |
-| Deploy          | Vercel                                                                                       |
+| ส่วน           | เทคโนโลยี                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| Framework      | [Next.js](https://nextjs.org) (App Router + API Routes)                                  |
+| Face detection | [`@mediapipe/tasks-vision`](https://ai.google.dev/edge/mediapipe) — รันฝั่ง client ล้วนๆ |
+| AI ทำนาย       | Gemini API (Flash model) — เรียกจาก server-side API route เท่านั้น                       |
+| Styling        | Tailwind CSS v4 (ธีม "Oriental Premium" — charcoal/copper)                               |
+| Testing        | Vitest (unit tests)                                                                      |
+| Deploy         | Vercel                                                                                   |
 
 ## 🗺️ Data Flow
 
@@ -78,12 +78,12 @@ npm run dev
 ## 📜 Scripts
 
 | Command         | คำอธิบาย                   |
-| ---------------- | ----------------------------- |
-| `npm run dev`    | รัน dev server                |
-| `npm run build`  | build สำหรับ production       |
-| `npm start`      | รัน production build          |
-| `npm run lint`   | ตรวจ ESLint                   |
-| `npm test`       | รัน unit tests ด้วย Vitest    |
+| --------------- | -------------------------- |
+| `npm run dev`   | รัน dev server             |
+| `npm run build` | build สำหรับ production    |
+| `npm start`     | รัน production build       |
+| `npm run lint`  | ตรวจ ESLint                |
+| `npm test`      | รัน unit tests ด้วย Vitest |
 
 ## 🔐 ความเป็นส่วนตัว (PDPA)
 
@@ -94,4 +94,4 @@ npm run dev
 
 ## 🎓 เครดิต
 
-ผลงานของ **นายธนกร ปิ่นสุข** นักศึกษาสาขาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียว
+ผลงานของ **นายธนกร ปิ่นสุข** นักศึกษาสาขาวิทยาการคอมพิวเตอร์ คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียวเฉลิมพระเกียรติ
