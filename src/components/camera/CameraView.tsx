@@ -29,7 +29,7 @@ export default function CameraView({ videoRef, showOverlay, facePositionStatus }
             rx="28"
             ry="38"
             fill="none"
-            stroke="#d97757"
+            stroke="var(--lacquer)"
             strokeOpacity="0.6"
             strokeWidth="1.5"
           />

@@ -11,7 +11,7 @@ interface CameraErrorProps {
 export default function CameraError({ message, action, onRetry, onClose }: CameraErrorProps) {
   return (
     <ShrineFrame className="flex flex-col items-center gap-4 text-center">
-      <p className="text-sm text-amber-400">{message}</p>
+      <p role="alert" className="text-sm text-amber-400">{message}</p>
       {action === "retry" ? (
         <button
           type="button"

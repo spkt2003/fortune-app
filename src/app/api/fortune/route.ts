@@ -5,6 +5,11 @@ import { parseFortuneResponse } from "@/lib/fortune/parseFortuneResponse";
 import { FALLBACK_FORTUNE } from "@/lib/fortune/payload";
 
 const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_TIMEOUT_MS = 15000;
+
+interface GeminiGenerateContentResponse {
+  candidates?: { content?: { parts?: { text?: string }[] } }[];
+}
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -28,6 +33,9 @@ export async function POST(request: NextRequest) {
 
   const prompt = buildPrompt(body.faceFeatures, body.gender, body.age);
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+
   let geminiResponse: Response;
   try {
     geminiResponse = await fetch(
@@ -39,6 +47,7 @@ export async function POST(request: NextRequest) {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: { responseMimeType: "application/json" },
         }),
+        signal: controller.signal,
       },
     );
   } catch {
@@ -46,6 +55,8 @@ export async function POST(request: NextRequest) {
       { error: "เชื่อมต่อระบบทำนายไม่ได้ กรุณาลองใหม่อีกครั้ง" },
       { status: 500 },
     );
+  } finally {
+    clearTimeout(timeoutId);
   }
 
   if (geminiResponse.status === 429) {
@@ -69,7 +80,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(FALLBACK_FORTUNE, { status: 200 });
   }
 
-  const rawText: unknown = (geminiData as any)?.candidates?.[0]?.content?.parts?.[0]?.text;
+  const rawText = (geminiData as GeminiGenerateContentResponse)?.candidates?.[0]?.content
+    ?.parts?.[0]?.text;
 
   if (typeof rawText !== "string") {
     return NextResponse.json(FALLBACK_FORTUNE, { status: 200 });

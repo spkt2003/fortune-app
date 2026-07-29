@@ -32,6 +32,7 @@ export default function CameraCapture() {
   const [fortuneState, setFortuneState] = useState<FortuneState>({ status: "idle" });
   const [lastPayload, setLastPayload] = useState<FortunePayload | null>(null);
   const requestIdRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleConfirm = async () => {
     if (!camera.capturedImage) return;
@@ -51,6 +52,7 @@ export default function CameraCapture() {
 
   const handleRetake = () => {
     requestIdRef.current++;
+    abortControllerRef.current?.abort();
     setConfirmIssue(null);
     setFaceFeatures(null);
     setFortuneState({ status: "idle" });
@@ -60,9 +62,11 @@ export default function CameraCapture() {
 
   const submitPayload = async (payload: FortunePayload) => {
     const requestId = ++requestIdRef.current;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setLastPayload(payload);
     setFortuneState({ status: "loading" });
-    const result = await requestFortune(payload);
+    const result = await requestFortune(payload, { signal: controller.signal });
     if (requestIdRef.current !== requestId) return;
     setFortuneState(
       result.ok ? { status: "success", result: result.result } : { status: "error", message: result.message },
@@ -83,11 +87,11 @@ export default function CameraCapture() {
       <ConfirmedPreview imageSrc={camera.capturedImage} onRetake={handleRetake}>
         {fortuneState.status === "idle" && <GenderAgeForm onSubmit={handleSubmit} />}
         {fortuneState.status === "loading" && (
-          <p className="text-center text-sm text-gold/80">กำลังทำนายผล...</p>
+          <p className="text-center text-sm text-gold">กำลังทำนายผล...</p>
         )}
         {fortuneState.status === "error" && (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-sm text-amber-400">{fortuneState.message}</p>
+            <p role="alert" className="text-sm text-amber-400">{fortuneState.message}</p>
             <button
               type="button"
               onClick={handleRetry}
@@ -151,7 +155,7 @@ export default function CameraCapture() {
           retakeDisabled={faceLandmarks.status === "detecting"}
         />
         {faceLandmarks.status === "detecting" && (
-          <p className="text-sm text-gold/80">กำลังตรวจสอบใบหน้า...</p>
+          <p className="text-sm text-gold">กำลังตรวจสอบใบหน้า...</p>
         )}
       </ShrineFrame>
     );

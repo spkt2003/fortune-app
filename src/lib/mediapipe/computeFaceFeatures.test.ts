@@ -165,6 +165,24 @@ describe("computeFaceFeatures", () => {
     expect(result.rightEyeSlantRatio).toBeCloseTo(0, 5);
   });
 
+  it("returns a finite eyebrowGapToEyeDistanceRatio instead of Infinity when eye distance collapses to zero", () => {
+    const result = computeFaceFeatures(
+      buildFaceLandmarks({
+        leftEyeCenter: { x: 0.5, y: 0.45 },
+        rightEyeCenter: { x: 0.5, y: 0.45 },
+      }),
+    );
+    expect(Number.isFinite(result.eyebrowGapToEyeDistanceRatio)).toBe(true);
+  });
+
+  it("returns a finite upperLipToLowerLipThicknessRatio instead of Infinity when lower lip thickness collapses to zero", () => {
+    const landmarks = buildFaceLandmarks();
+    landmarks[LOWER_LIP_OUTER_BOTTOM] = landmarks[LOWER_LIP_INNER];
+
+    const result = computeFaceFeatures(landmarks);
+    expect(Number.isFinite(result.upperLipToLowerLipThicknessRatio)).toBe(true);
+  });
+
   it("tracks geometric x-position, not which MediaPipe LEFT_EYE/RIGHT_EYE constant fed the cluster", () => {
     // buildFaceLandmarks's "leftEyeCenter"/"rightEyeCenter" options control where
     // MediaPipe's own FACE_LANDMARKS_LEFT_EYE / FACE_LANDMARKS_RIGHT_EYE clusters get
