@@ -53,6 +53,11 @@ export default function IntroConsent({ onAccept }: IntroConsentProps) {
       >
         เข้าใจแล้ว และยินยอมเริ่มใช้งาน
       </button>
+
+      <p className="text-center text-xs text-parchment/50">
+        ผลงานของ นายธนกร ปิ่นสุข นักศึกษาสาขาวิทยาการคอมพิวเตอร์
+        คณะวิทยาศาสตร์และเทคโนโลยี มหาวิทยาลัยหัวเฉียว
+      </p>
     </ShrineFrame>
   );
 }
